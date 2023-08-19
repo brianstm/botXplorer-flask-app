@@ -2,6 +2,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-red.svg)](https://opensource.org/licenses/Apache-2.0)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Brians%20Tjipto-blue.svg)](https://www.linkedin.com/in/brians-tjipto-a25850153/)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Aziel%20Chen-blue.svg)](https://www.linkedin.com/in/aziel-chen-a79594278/)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Sameer%20Ahamed-blue.svg)](https://www.linkedin.com/in/sameer-ahamed-648543204)
 
 ## Description
 This repository contains the Flask app package for the botXplorer Autonomous Mobile Robot (AMR) developed by Singapore Polytechnic and SICK Pte. Ltd Singapore. The botXplorer AMR is a revamped and remade version of the Ubiquity Silver Magni Bot, equipped with the SICK TiM781 LiDAR Sensor. It utilizes the RosPy ROS 1 Noetic framework for communication and control.
