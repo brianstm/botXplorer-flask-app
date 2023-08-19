@@ -19,11 +19,33 @@ from geometry_msgs.msg import PoseArray
 
 app = Flask(__name__)
 
-script_path = os.path.dirname(os.path.abspath(__file__))
 
+# ROS Flask Initialization for Rospy messages
+rospy.init_node('flask_app')
+logger = logging.getLogger('rosout')
+logger.setLevel(logging.DEBUG)
+handler = logging.StreamHandler(sys.stdout)
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
+
+# ROS Subscriber
+rospy.Subscriber('/amcl_pose', PoseWithCovarianceStamped, pose_callback)
+rospy.Subscriber('/move_base/status', GoalStatusArray, status_callback)
+rospy.Subscriber('/battery_state', BatteryState, battery_state_callback)
+pub = rospy.Publisher('/move_base_simple/goal', PoseStamped, queue_size=10)
+cancel_pub = rospy.Publisher('/move_base/cancel', GoalID, queue_size=10)
+rospy.Subscriber("/particlecloud", PoseArray, particlecloud_callback)
+
+
+# Imports the coordinates.txt and routes.txt file
+script_path = os.path.dirname(os.path.abspath(__file__))
 filename = os.path.join(script_path, 'coordinates.txt')
 routes_filename = os.path.join(script_path, 'routes.txt')
 
+# Global variable
 latest_pose = None
 status_message = {}
 coordinates = {}
@@ -34,6 +56,7 @@ amcl_covariance = None
 particle_cloud = None
 
 
+# Callbacks
 def pose_callback(msg):
     global latest_pose, amcl_covariance
     latest_pose = msg
@@ -43,7 +66,6 @@ def pose_callback(msg):
 def status_callback(msg):
     global status_message
     status_message = message_converter.convert_ros_message_to_dictionary(msg)
-    # rospy.logwarn("Status updated: %s", status_message)
 
 
 def battery_state_callback(msg):
@@ -65,67 +87,7 @@ def particlecloud_callback(data):
     particle_cloud = data.poses
 
 
-def calculate_confidence_level(covariance_data):
-    covariance_data = np.reshape(covariance_data, (6, 6))
-    covariance_position = np.array(covariance_data[:2, :2])
-    covariance_orientation = np.array(covariance_data[5:6, 5:6])
-    eigenvalues_position, _ = np.linalg.eig(covariance_position)
-    eigenvalues_orientation, _ = np.linalg.eig(covariance_orientation)
-    total_uncertainty = np.sum(eigenvalues_position) + \
-        np.sum(eigenvalues_orientation)
-    confidence_level = max(0, 100 - total_uncertainty * 100)
-
-    return confidence_level
-
-
-def calculate_statistics():
-    global particle_cloud
-
-    if not particle_cloud:
-        return None, None, None, None
-
-    x_values = [pose.position.x for pose in particle_cloud]
-    y_values = [pose.position.y for pose in particle_cloud]
-
-    mean_x = np.mean(x_values)
-    mean_y = np.mean(y_values)
-    std_dev_x = np.std(x_values)
-    std_dev_y = np.std(y_values)
-
-    return mean_x, mean_y, std_dev_x, std_dev_y
-
-
-def estimate_correctness(std_dev_x, std_dev_y):
-    return 1 - (std_dev_x + std_dev_y) / 2
-
-
-rospy.init_node('flask_app')
-logger = logging.getLogger('rosout')
-logger.setLevel(logging.DEBUG)
-handler = logging.StreamHandler(sys.stdout)
-formatter = logging.Formatter(
-    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
-
-rospy.Subscriber('/amcl_pose', PoseWithCovarianceStamped, pose_callback)
-rospy.Subscriber('/move_base/status', GoalStatusArray, status_callback)
-rospy.Subscriber('/battery_state', BatteryState, battery_state_callback)
-pub = rospy.Publisher('/move_base_simple/goal', PoseStamped, queue_size=10)
-cancel_pub = rospy.Publisher('/move_base/cancel', GoalID, queue_size=10)
-rospy.Subscriber("/particlecloud", PoseArray, particlecloud_callback)
-
-
-def publish_goal(x, y, z, w):
-    goal = PoseStamped()
-    goal.header = Header(stamp=rospy.Time.now(), frame_id='map')
-    goal.pose.position.x = x
-    goal.pose.position.y = y
-    goal.pose.orientation.z = z
-    goal.pose.orientation.w = w
-    pub.publish(goal)
-
-
+# Load the coordinates and route files
 def load_coordinates():
     global coordinates
     with open(filename, 'r') as f:
@@ -141,6 +103,72 @@ def load_routes():
         routes = {}
 
 
+# Calculation functions 
+def calculate_confidence_level(covariance_data):
+    # Reshape the covariance_data into a 6x6 matrix
+    covariance_data = np.reshape(covariance_data, (6, 6))
+
+    # Extract the covariance matrix for position (2x2 matrix)
+    covariance_position = np.array(covariance_data[:2, :2])
+
+    # Extract the covariance matrix for orientation (1x1 matrix)
+    covariance_orientation = np.array(covariance_data[5:6, 5:6])
+
+    # Calculate the eigenvalues of the position covariance matrix
+    eigenvalues_position, _ = np.linalg.eig(covariance_position)
+
+    # Calculate the eigenvalues of the orientation covariance matrix
+    eigenvalues_orientation, _ = np.linalg.eig(covariance_orientation)
+
+    # Calculate the total uncertainty by summing the eigenvalues of position and orientation
+    total_uncertainty = np.sum(eigenvalues_position) + \
+        np.sum(eigenvalues_orientation)
+
+    # Calculate the confidence level by subtracting the total uncertainty from 100
+    confidence_level = max(0, 100 - total_uncertainty * 100)
+
+    return confidence_level
+
+
+def calculate_statistics():
+    global particle_cloud
+
+    # Check if the particle_cloud is empty
+    if not particle_cloud:
+        return None, None, None, None
+
+    # Extract the x and y values from the particle_cloud
+    x_values = [pose.position.x for pose in particle_cloud]
+    y_values = [pose.position.y for pose in particle_cloud]
+
+    # Calculate the mean of x and y values
+    mean_x = np.mean(x_values)
+    mean_y = np.mean(y_values)
+
+    # Calculate the standard deviation of x and y values
+    std_dev_x = np.std(x_values)
+    std_dev_y = np.std(y_values)
+
+    return mean_x, mean_y, std_dev_x, std_dev_y
+
+
+def estimate_correctness(std_dev_x, std_dev_y):
+    # Calculate the average standard deviation of x and y values
+    return 1 - (std_dev_x + std_dev_y) / 2
+
+
+# Functions
+def publish_goal(x, y, z, w):
+    goal = PoseStamped()
+    goal.header = Header(stamp=rospy.Time.now(), frame_id='map')
+    goal.pose.position.x = x
+    goal.pose.position.y = y
+    goal.pose.orientation.z = z
+    goal.pose.orientation.w = w
+    pub.publish(goal)
+
+
+# API Routes
 @app.route('/', methods=['GET', 'POST'])
 def index():
     load_routes()
