@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>botXplorer_flask_app</name>
+  <version>0.1.0</version>
+  <description>The botXplorer_flask_app package</description>
+  <maintainer email="brianstjipto@gmail.com">Brians Tjipto</maintainer>
+
+  <license>Apache License, Version 2.0</license>
+
+  <url type="website">https://github.com/brianstm/botXplorer-flask-app.git</url>
+
+  <author email="brianstjipto@gmail.com">Brians Tjipto</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>flask</build_depend>
+  <build_depend>numpy</build_depend>
+  <build_export_depend>flask</build_export_depend>
+  <build_export_depend>numpy</build_export_depend>
+  <exec_depend>flask</exec_depend>
+  <exec_depend>numpy</exec_depend>
+
+  <export>
+  </export>
+</package>
