@@ -126,21 +126,6 @@ def publish_goal(x, y, z, w):
     pub.publish(goal)
 
 
-"""def publish_goal(x, y, z, w):
-    cmd = [
-        "rostopic",
-        "pub",
-        "/move_base_simple/goal",
-        "geometry_msgs/PoseStamped",
-        "{ header: { seq: 0, stamp: { secs: 0, nsecs: 0 }, frame_id: 'map' }, pose: { position: { x: " +
-        str(x) + ", y: " + str(y) +
-        ", z: 0.0 }, orientation: { x: 0.0, y: 0.0, z: " +
-        str(z) + ", w: " + str(w) + " } } }"
-    ]
-    subprocess.run(cmd)
-"""
-
-
 def load_coordinates():
     global coordinates
     with open(filename, 'r') as f:

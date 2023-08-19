@@ -1,3 +1,4 @@
+# To Test out the Basic UI of the Flask App without the use of ROS
 from flask import Flask, render_template, request, redirect, jsonify
 import subprocess
 import json
@@ -73,7 +74,7 @@ def get_point():
 
 @app.route('/get_status_message', methods=['GET'])
 def get_status_message():
-    time.sleep(2) 
+    time.sleep(2)
     return jsonify({'status_message': {'status_list': [{'status': 3}]}})
 
 

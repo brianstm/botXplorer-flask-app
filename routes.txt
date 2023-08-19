@@ -1,1 +1,4 @@
-{"home-arm": ["arm", "home", "arm", "home"], "all": ["arm", "door", "home"]}
+{
+    "home-arm": ["arm", "home", "arm", "home"], 
+    "all": ["arm", "door", "home"]
+}

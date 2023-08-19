@@ -236,9 +236,9 @@
   <footer class="fixed bg-gray-900 rounded-t-xl md:absolute bottom-0 left-0 right-0 w-screen">
     <div class="py-3 px-3 flex justify-center">
       <p id="statusMessage" class="text-lg font-bold text-white">Loading Status...</p>
-      <br>
-      <p id="cancelText" class="text-lg font-bold text-white"></p>
-    </div>
+      <div class="pt-1">
+        <p id="cancelText" class="text-lg font-bold text-white"></p>
+      </div>
   </footer>
   <script>
     function getPoint() {
@@ -256,6 +256,7 @@
         });
     }
     function statusMsg() {
+      document.getElementById('cancelText').innerHTML = "";
       fetch('/get_status_message')
         .then(response => response.json())
         .then(data => {
@@ -338,7 +339,7 @@
         .then(function (response) {
           if (response.ok) {
             console.log('Move_base action cancelled successfully! click clear to run routes again');
-            document.getElementById('cancelText').innerHTML = "Job cancel successful!";
+            document.getElementById('cancelText').innerHTML = "Job cancel successful! Clear all routes to run again!";
           } else {
             console.log('Failed to cancel move_base action!');
             document.getElementById('cancelText').innerHTML = "Failed to cancel job";
