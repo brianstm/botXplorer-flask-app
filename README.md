@@ -52,9 +52,9 @@ Contributions to the development of the botXplorer AMR Flask app are welcome. If
 
 ## Authors
 
-- Brians Tjipto Meidianto (brianstjipto@gmail.com)
-- Aziel Chen (azielchen@gmail.com)
-- Sameer Ahamed (sameersa77@gmail.com)
+- Brians Tjipto Meidianto
+- Aziel Chen Qing Feng
+- Sameer Ahamed Sadiq Batcha
 
 ## License
 
