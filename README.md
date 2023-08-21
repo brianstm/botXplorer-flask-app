@@ -29,12 +29,14 @@ Follow these steps to set up the botXplorer AMR Flask app:
    ```bash
    rosdep install package.xml
    ```
+   As long as you have flask and numpy installed in your ROS system it should run.
 
 3. Run the Flask app:
 
    ```bash
    python app.py
    ```
+   The app.py can only be run in ROS, but the app_for_noROS.py can be run in any place as long as numpy and flask is installed, this was mainly for us to test the html templates, in our windows system.
 
 4. Open the web browser and navigate to `http://localhost:6969` to access the botXplorer AMR interface.
 
