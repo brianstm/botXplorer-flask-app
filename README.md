@@ -56,6 +56,9 @@ For the navigation capabilities of the botXplorer AMR, please refer to the [botX
 - Confidence level estimation calculations powered by NumPy based on the AMR's localization covariance data.
 - Particle cloud correctness estimation calculations powered by NumPy for accurate localization status.
 
+## Templates
+The HTML is in the templates folder, it is styled using [Tailwind CSS](https://tailwindcss.com/docs/installation). 
+
 ## Contributing
 
 Contributions to the development of the botXplorer AMR Flask app are welcome. If you encounter any issues or have suggestions for improvements, feel free to open an issue or submit a pull request on GitHub.
