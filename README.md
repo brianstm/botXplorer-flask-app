@@ -42,7 +42,7 @@ Follow these steps to set up the botXplorer AMR Flask app:
 
 ## Documentation
 
-Comprehensive documentation for the botXplorer AMR can be found at [https://amr-docs-brianstm.vercel.app](https://amr-docs-brianstm.vercel.app). It provides detailed information about the project, including setup instructions, API documentation, and usage guidelines.
+Comprehensive documentation for the botXplorer AMR can be found at [AMR-Documentation](https://amr-docs-brianstm.vercel.app). It provides detailed information about the project, including setup instructions, API documentation, and usage guidelines.
 
 ## Navigation
 
